@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Mock API response</title>
+
+    <!-- Font Icon -->
+    <link rel="stylesheet" href="fonts/material-icon/css/material-design-iconic-font.min.css">
+
+    <!-- Main css -->
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+    <!-- <div class="main">3 -->
+        <div class="container">
+            <div class="signup-content">
+                <div class="signup-img">
+                    <!-- <img src="images/signup-img.jpg" alt=""> -->
+                    <img src="images/code1.png" alt="">
+                </div>
+                <div class="signup-form">
+                    <form method="POST" class="register-form" id="register-form">
+                        <h2>Create a new mock</h2>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="name">Description :</label>
+                                <input type="textbox" name="description" id="description" required/>
+                            </div>
+                            
+                        </div>
+
+                        <div class="form-row">
+                                <div class="form-group">
+                                    <label for="state">HTTP Method</label>
+                                    <div class="form-select">
+                                        <select name="method" id="method" required>
+                                            <option value=""></option>
+                                            <option value="GET">GET</option>
+                                            <option value="POST">POST</option>
+                                            <option value="PUT">PUT</option>
+                                            <option value="DELETE">DELETE</option>
+                                        </select>
+                                        <span class="select-icon"><i class="zmdi zmdi-chevron-down"></i></span>
+                                    </div>
+                                </div>
+                            </div>
+
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="state">Status code</label>
+                                <div class="form-select">
+                                    <select name="code" id="code">
+                                        <option value=""></option>
+                                        <option value="200">200</option>
+                                        <option value="300">300</option>
+                                        <option value="404">404</option>
+                                        <option value="500">500</option>
+                                    </select>
+                                    <span class="select-icon"><i class="zmdi zmdi-chevron-down"></i></span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-row">
+                        <div class="form-group">
+                            <label for="response">Mock Response</label>
+                            <!-- <input type="response" name="response" id="response" /> -->
+                            <textarea type="input" name="response" id="response"></textarea>
+                        </div>
+                        </div>
+                        <br>
+                        <br>
+                        <br>
+                        <div class="form-row1">
+                        <div class="form-group1">
+                                <label for="result">Result</label>
+                                <!-- <input type="response" name="response" id="response" /> -->
+                                <div class="" name="result" id="result" style="display: block;"></div>
+                            </div>
+                        </div>
+                        <div class="form-submit">
+                            <input type="reset" value="Reset All" class="submit" name="reset" id="reset"/>
+                            <input type="button" value="Submit Form" class="submit" name="submit" id="submit" onclick="sf()"/>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+    <!-- </div> -->
+
+    <!-- JS -->
+    <!-- <script src="vendor/jquery/jquery.min.js"></script> -->
+    <script src="js/main.js"></script>
+    
+    <script>
+        function sf() {
+            var description = document.getElementById('description').value;
+            var method = document.getElementById('method').value;
+            var code = document.getElementById('code').value;
+            var response = document.getElementById('response').value;
+            console.log(`${description} ${method} ${code} ${response}`);
+            var request = {
+                description: description,
+                verb:method,
+                statusCode:Number(code),
+                response_body:response
+            };
+            console.log(request);
+            // alert(JSON.stringify(request));
+            var headers = new Headers();
+            // Tell the server we want JSON back
+            headers.set('Accept', 'application/json');
+            headers.set('Content-Type', 'application/json');
+            
+            var url = 'http://localhost:80/create';
+            var fetchOptions = {
+                method: 'POST',
+                headers,
+                body: JSON.stringify(request)
+            };
+            console.log('fetchoptions', fetchOptions);
+            var responsePromise = fetch(url, fetchOptions); 
+
+            // 3. Use the response
+            // ================================
+            responsePromise
+            // 3.1 Convert the response into JSON-JS object.
+            .then(function(response) {
+            return response.json();
+    })
+    // 3.2 Do something with the JSON data
+        .then(function(jsonData) {
+        console.log(jsonData);
+        if(jsonData.status === 'Success') {
+            document.getElementById('result').className = "alert-success";
+            document.getElementById('result').innerText =
+            'Mock created at : \n' + jsonData.mockUrl;
+        }
+        else if(jsonData.status === 'Error') {
+            document.getElementById('result').className = "alert-failure";
+            document.getElementById('result').innerText =
+            'Error : ' + jsonData.message;
+        }
+    });
+        }
+    </script>
+</body><!-- This templates was made by Colorlib (https://colorlib.com) -->
+</html>
